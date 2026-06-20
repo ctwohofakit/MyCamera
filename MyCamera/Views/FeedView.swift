@@ -15,7 +15,7 @@ struct FeedView: View {
     
     private var entries:[ProgressEntryModel] = []
     private var imageStore = ImageStoreService()
-    
+    @State private var isAnimated = false
     
     var body: some View {
         NavigationStack{
@@ -27,19 +27,51 @@ struct FeedView: View {
                     } label: {
                         HStack{
                             if let img = imageStore.loadIMG(fileName: entry.beforeImage){
-                                Image(uiImage: img)
+                                ZStack{
+                                    Image("frame")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width:110, height: 110)
+                                    
+                                    Image(uiImage: img)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width:70, height: 70)
+//                                        .clipped()
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        .padding(10)
+                                    
+                       
+                                }
+                                    
                             }else {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width:54, height: 54)
+                                RoundedRectangle(cornerRadius: 12)
+                                    .frame(width:100, height: 100)
                             }
                             VStack{
-                                Text(entry.createdAt, style: .date)
-                                if entry.note.isEmpty == false{
-                                    Text(entry.note)
+                                HStack{
+                                    Image("greet")
+                                        .resizable()
+                                        .frame(width:20, height: 20)
+                                        .scaleEffect(isAnimated ? 1.0 : 1.8)
+                                        .onAppear{
+                                            withAnimation(.spring(duration: 0.8, bounce:0.3)){
+                                                isAnimated = true
+                                            }
+                                        }
+                                    
+                                    Text(" - \(entry.createdAt, style: .date)")
+                                        .foregroundStyle(.gray)
+                                    //                                    .background(.gray, in: Capsule())
+                                    
+                                    if entry.note.isEmpty == false{
+                                        Text(entry.note)
+                                    }
                                 }
-                                
+                                .padding()
+
                             }
-                            
+                            Spacer()
                             
                         }
                     }
@@ -48,10 +80,19 @@ struct FeedView: View {
             }
             .navigationTitle("Progress tracker")
             .toolbar{
-                NavigationLink("Add"){
-                    AddEntryView()
-                }
+//                NavigationLink("Add"){
+//                    AddEntryView()
+//                }
+                NavigationLink(value: "addRoute") {
+                              Image(systemName: "camera.fill")
+                        .foregroundStyle(.pink.opacity(0.6))
+                                  .imageScale(.large)
+                          }
             }
+            .navigationDestination(for: String.self) { value in
+                    if value == "addRoute" {
+                        AddEntryView()                    }
+                }
         }
     }
     

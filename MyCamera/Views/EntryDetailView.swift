@@ -10,7 +10,9 @@ struct EntryDetailView: View {
     let entry: ProgressEntryModel
     
     private var imageStore = ImageStoreService()
-    
+    init(entry: ProgressEntryModel) {
+        self.entry = entry
+    }
     var body: some View {
         Text("Add Entry")
         ScrollView{
@@ -24,7 +26,7 @@ struct EntryDetailView: View {
                     photoBox(fileName: entry.beforeImage)
                     
                     Text("After:")
-                    photoBox(fileName: entry.afterIamge)
+                    photoBox(fileName: entry.afterImage)
                 }
                 if entry.note.isEmpty == false{
                     VStack{
@@ -47,13 +49,13 @@ struct EntryDetailView: View {
         ZStack{
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [6]))
-                .frame(height: 260)
+                .frame(width: 180, height: 260)
             
             if let img = imageStore.loadIMG(fileName: fileName){
                 Image(uiImage: img)
                     .resizable()
                     .scaledToFit()
-                    .frame(height:260)
+                    .frame(width: 180, height:260)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             } else{
                 Text("Image not found")
